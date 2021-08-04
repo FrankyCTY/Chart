@@ -1,17 +1,16 @@
 import React from 'react';
-import { letterFrequency } from '@visx/mock-data';
 import { Group } from '@visx/group';
 import { Bar } from '@visx/shape';
 import { scaleLinear, scaleBand } from '@visx/scale';
 import { AxisLeft, AxisBottom } from '@visx/axis';
+import { useTooltipInPortal } from '@visx/tooltip';
+import { Text } from '@visx/text';
 
 // We'll use some mock data from `@visx/mock-data` for this.
-// const data = letterFrequency;
-// console.log(data);
 const data = [
-  { letter: 'A', frequency: 0.5 },
-  { letter: 'B', frequency: 0.2 },
-  { letter: 'C', frequency: 0.3 },
+  { key: 'A', value: 0.5 },
+  { key: 'B', value: 0.2 },
+  { key: 'C', value: 0.3 },
 ];
 
 // Define the graph dimensions and margins
@@ -24,8 +23,10 @@ const xMax = width - margin.left - margin.right;
 const yMax = height - margin.top - margin.bottom;
 
 // We'll make some helpers to get at the data we want
-const x = (d) => d.letter;
-const y = (d) => +d.frequency * 100;
+const x = (d) => d.key;
+const y = (d) => +d.value * 100;
+
+const distanceBetweenTallestBarAndMaxHeight = 10;
 
 // And then scale the graph by our data
 const xScale = scaleBand({
@@ -37,7 +38,7 @@ const xScale = scaleBand({
 const yScale = scaleLinear({
   range: [yMax, 0], // maxHeight
   round: true,
-  domain: [0, Math.max(...data.map(y))], // Y axis-data range
+  domain: [0, Math.max(...data.map(y)) + distanceBetweenTallestBarAndMaxHeight], // Y axis-data range
 });
 
 // Compose together the scale and accessor functions to get point functions
@@ -52,6 +53,9 @@ export const purple3 = '#a44afe';
 
 // Finally we'll embed it all in an SVG
 export function CustomVisx(props) {
+  const [hoveredTickValue, setHoveredTickValue] = React.useState();
+  const { containerRef, TooltipInPortal } = useTooltipInPortal();
+
   return (
     <div
       style={{
@@ -72,16 +76,48 @@ export function CustomVisx(props) {
                 height={barHeight}
                 width={xScale.bandwidth() + 40}
                 fill="#e1c"
+                onClick={(events) => {
+                  if (!events) return;
+                  const { key, value } = d;
+                  console.log(d);
+                  alert(JSON.stringify({ key, value }));
+                }}
               />
             </Group>
           );
         })}
         <AxisLeft
           scale={yScale}
-          label="hi"
           stroke={purple3}
           tickStroke={purple2}
           orientation="left"
+          hideAxisLine
+          numTicks={6}
+          strokeWidth={0}
+          tickClassName="my"
+          tickComponent={({ formattedValue, ...tickProps }) => (
+            <g>
+              <text
+                {...tickProps}
+                ref={
+                  formattedValue === hoveredTickValue ? containerRef : undefined
+                }
+                onPointerEnter={() => setHoveredTickValue(formattedValue)}
+                onPointerLeave={() => setHoveredTickValue(null)}
+              >
+                {formattedValue}
+              </text>
+              {hoveredTickValue === formattedValue && (
+                <TooltipInPortal offsetTop={20} offsetLeft={-50}>
+                  <div>
+                    Full value in HTML
+                    <br />
+                    {formattedValue}
+                  </div>
+                </TooltipInPortal>
+              )}
+            </g>
+          )}
         />
         <AxisBottom
           top={yMax}
