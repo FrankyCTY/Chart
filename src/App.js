@@ -4,6 +4,7 @@ import { CustomVisx } from './CustomVisx';
 import { CustomPie } from './CustomPie';
 import { CustomBarGroup } from './BarGroup';
 import { TooltipOnTick } from './TooltipOnTick';
+import { LineChartBase } from './LineChartBase';
 import ParentSize from '@visx/responsive/lib/components/ParentSize';
 import './App.css';
 
@@ -21,8 +22,8 @@ function App() {
           BarGroup
         </button>
         <button onClick={() => setChartPackage('customPie')}>CustomPie</button>
-        <button onClick={() => setChartPackage('tooltipOnTick')}>
-          CustomPie
+        <button onClick={() => setChartPackage('lineChartBase')}>
+          LineChartBase
         </button>
       </div>
 
@@ -36,6 +37,7 @@ function App() {
           </ParentSize>
         )}
         {chartPackage === 'tooltipOnTick' && <TooltipOnTick />}
+        {chartPackage === 'lineChartBase' && <LineChartBase />}
       </div>
     </div>
   );
