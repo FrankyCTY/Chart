@@ -5,6 +5,7 @@ import {
   XYChart,
   Tooltip,
 } from '@visx/xychart';
+import { curveCardinal } from '@visx/curve';
 import styled from 'styled-components';
 import { format } from 'date-fns';
 
@@ -115,7 +116,12 @@ const LineChart = () => {
           }}
           strokeDasharray="0, 4"
         />
-        <AnimatedLineSeries dataKey="Line 1" data={data1} {...accessors} />
+        <AnimatedLineSeries
+          dataKey="Line 1"
+          data={data1}
+          curve={curveCardinal}
+          {...accessors}
+        />
         {/* <AnimatedLineSeries dataKey="Line 2" data={data2} {...accessors} /> */}
         <Tooltip
           snapTooltipToDatumX
