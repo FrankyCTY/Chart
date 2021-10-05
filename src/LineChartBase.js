@@ -84,52 +84,71 @@ const accessors = {
 
 const LineChart = () => {
   return (
-    <XYChart height={300} xScale={{ type: 'time' }} yScale={{ type: 'linear' }}>
-      <AnimatedAxis hideAxisLine hideTicks orientation="bottom" numTicks={4} />
-      <AnimatedAxis hideAxisLine hideTicks orientation="left" numTicks={4} />
-      <AnimatedGrid
-        columns={false}
-        numTicks={4}
-        lineStyle={{
-          stroke: '#e1e1e1',
-          strokeLinecap: 'round',
-          strokeWidth: 1,
-        }}
-        strokeDasharray="0, 4"
-      />
-      <AnimatedLineSeries dataKey="Line 1" data={data1} {...accessors} />
-      {/* <AnimatedLineSeries dataKey="Line 2" data={data2} {...accessors} /> */}
-      <Tooltip
-        snapTooltipToDatumX
-        snapTooltipToDatumY
-        showSeriesGlyphs
-        glyphStyle={{
-          fill: '#008561',
-          strokeWidth: 0,
-        }}
-        renderTooltip={({ tooltipData }) => {
-          return (
-            <TooltipContainer>
-              {Object.entries(tooltipData.datumByKey).map((lineDataArray) => {
-                const [key, value] = lineDataArray;
+    <ChartContainer>
+      <XYChart
+        height={300}
+        xScale={{ type: 'time' }}
+        yScale={{ type: 'linear' }}
+        margin={{ left: 60, top: 35, bottom: 38, right: 27 }}
+      >
+        <AnimatedAxis
+          hideAxisLine
+          hideTicks
+          orientation="bottom"
+          tickLabelProps={() => ({ dy: tickLabelOffset })}
+          numTicks={4}
+        />
+        <AnimatedAxis
+          hideAxisLine
+          hideTicks
+          orientation="left"
+          numTicks={4}
+          tickLabelProps={() => ({ dx: -10 })}
+        />
+        <AnimatedGrid
+          columns={false}
+          numTicks={4}
+          lineStyle={{
+            stroke: '#e1e1e1',
+            strokeLinecap: 'round',
+            strokeWidth: 1,
+          }}
+          strokeDasharray="0, 4"
+        />
+        <AnimatedLineSeries dataKey="Line 1" data={data1} {...accessors} />
+        {/* <AnimatedLineSeries dataKey="Line 2" data={data2} {...accessors} /> */}
+        <Tooltip
+          snapTooltipToDatumX
+          snapTooltipToDatumY
+          showSeriesGlyphs
+          glyphStyle={{
+            fill: '#008561',
+            strokeWidth: 0,
+          }}
+          renderTooltip={({ tooltipData }) => {
+            return (
+              <TooltipContainer>
+                {Object.entries(tooltipData.datumByKey).map((lineDataArray) => {
+                  const [key, value] = lineDataArray;
 
-                return (
-                  <div className="row" key={key}>
-                    <div className="date">
-                      {format(accessors.xAccessor(value.datum), 'MMM d')}
+                  return (
+                    <div className="row" key={key}>
+                      <div className="date">
+                        {format(accessors.xAccessor(value.datum), 'MMM d')}
+                      </div>
+                      <div className="value">
+                        <ColoredSquare color="#008561" />
+                        {accessors.yAccessor(value.datum)}
+                      </div>
                     </div>
-                    <div className="value">
-                      <ColoredSquare color="#008561" />
-                      {accessors.yAccessor(value.datum)}
-                    </div>
-                  </div>
-                );
-              })}
-            </TooltipContainer>
-          );
-        }}
-      />
-    </XYChart>
+                  );
+                })}
+              </TooltipContainer>
+            );
+          }}
+        />
+      </XYChart>
+    </ChartContainer>
   );
 };
 
