@@ -29,7 +29,7 @@ function App() {
         <button onClick={() => setChartPackage('mapChart')}>MapChart</button>
       </div>
 
-      <div style={{ width: '500px', height: '500px' }}>
+      <div style={{ width: '800px', height: '800px' }}>
         {chartPackage === 'visx' && <Visx />}
         {chartPackage === 'customVisx' && <CustomVisx />}
         {chartPackage === 'customBarGroup' && <CustomBarGroup />}

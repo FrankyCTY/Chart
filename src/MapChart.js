@@ -1,18 +1,14 @@
 import React from 'react';
-import { scaleQuantize } from '@visx/scale';
+import { scaleQuantize, scaleLinear } from '@visx/scale';
 import { Mercator } from '@visx/geo';
 import * as topojson from 'topojson-client';
 import topo from './nzTopo.json';
-import { scaleLinear } from 'd3';
+// import { scaleLinear } from 'd3';
 
 export const background = '#f9f7e8';
 
 // get min and max from the data and populate into domain
 const c = scaleLinear().domain([1, 10]).range(['#A4E0DB', '#22635E']);
-console.log(c);
-
-console.log(c(2));
-console.log(c(8));
 
 // @ts-ignore
 // const world = topojson.feature(topology, topology.objects.units);
@@ -40,23 +36,13 @@ const color = scaleQuantize({
   ],
 });
 
-const sc = 50;
-const scaleRatioX = 4;
-const scaleRatioY = 1;
+console.log(color(6));
 
-const offsetX = sc * scaleRatioX;
-// const ratioX = 14;
-const ratioX = offsetX / 14.28;
-
-const offsetY = sc * scaleRatioY;
-// const ratioY = 15;
-const ratioY = offsetY / 3.33;
+const NZ_LNG_LAD = [174.7645, -36.8509];
 
 export const MapChart = ({ width, height, events = true }) => {
-  // const centerX = width / 2 - 2820;
-  const centerX = width / 2 - offsetX * ratioX;
-  const centerY = height / 2 - offsetY * ratioY;
-  const scale = (width / sc) * 100;
+  const centerX = width / 2;
+  const centerY = height / 2;
 
   return width < 10 ? null : (
     <svg width={width} height={height}>
@@ -70,8 +56,9 @@ export const MapChart = ({ width, height, events = true }) => {
       />
       <Mercator
         data={worldGeoJson.features}
-        scale={scale}
-        translate={[centerX - offsetX, centerY - offsetY]}
+        scale={1200}
+        translate={[centerX, centerY]}
+        center={NZ_LNG_LAD}
       >
         {(mercator) => {
           // console.log('mercator', mercator);
@@ -79,13 +66,17 @@ export const MapChart = ({ width, height, events = true }) => {
             <g>
               {mercator.features.map(({ feature, path }, i) => {
                 // console.log(feature);
+                // if (feature.properties.NAME_1.includes('North')) {
+                //   console.log(feature);
+                // }
 
                 return (
                   <path
-                    key={`map-feature-${i}`}
+                    // key={`map-feature-${i}`}
+                    key={`${feature.properties.NAME_1}-${feature.properties.NAME_2}`}
                     d={path || ''}
-                    fill={color(feature.geometry.coordinates.length)}
-                    // fill={feature.properties.NAME_1 === '' && 'pink'}
+                    // fill={color(feature.geometry.coordinates.length)}
+                    fill={feature.properties.NAME_1 === 'Northland' && 'pink'}
                   />
                 );
               })}
